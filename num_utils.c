@@ -26,3 +26,13 @@ unsigned int nbits(unsigned int i) {
     if (i == 0) return 0;
     return log_2(i) + 1;
 }
+
+unsigned int parity(unsigned int v) {
+    // https://graphics.stanford.edu/~seander/bithacks.html#ParityParallel
+
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    v &= 0xf;
+    return (0x6996 >> v) & 1u;
+}

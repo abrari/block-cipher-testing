@@ -11,4 +11,6 @@ unsigned int log_2(unsigned int);
 
 unsigned int nbits(unsigned int);
 
+unsigned int parity(unsigned int);
+
 #endif //BLOCK_CIPHER_NUM_UTILS_H

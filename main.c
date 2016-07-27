@@ -14,8 +14,15 @@ int main() {
     unsigned int m = 3, n = 3;
     unsigned int **ddt = sbox_differential_table(sample_sbox, m, n);
 
+    printf("DDT:\n");
     print_uint_matrix(ddt, m, n);
 
+    unsigned int **lat = sbox_linear_approx_table(sample_sbox, m, n);
+
+    printf("LAT:\n");
+    print_uint_matrix(lat, m, n);
+
+    free(lat);
     free(ddt);
 
     return 0;

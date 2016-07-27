@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "num_utils.h"
 
 unsigned int **alloc_uint_matrix(unsigned int m, unsigned int n) {
@@ -11,6 +12,23 @@ unsigned int **alloc_uint_matrix(unsigned int m, unsigned int n) {
     }
     return mat;
 }
+
+void print_uint_matrix(unsigned int **ddt, unsigned int m, unsigned int n) {
+
+    unsigned int nrows = two_power(m);
+    unsigned int ncols = two_power(n);
+
+    unsigned int i, j;
+    for (i = 0; i < nrows; ++i) {
+        for (j = 0; j < ncols; ++j) {
+            printf("%2d ", ddt[i][j]);
+        }
+        printf("\n");
+    }
+
+}
+
+// ==============================================================================
 
 unsigned int **sbox_differential_table(unsigned int *sbox, unsigned int m, unsigned int n) {
 
@@ -65,17 +83,32 @@ unsigned int **func_differential_table(unsigned int (*S)(unsigned int), unsigned
 
 }
 
-void print_uint_matrix(unsigned int **ddt, unsigned int m, unsigned int n) {
+unsigned int xor_mask(unsigned int input, unsigned int mask) {
+    // because xor result (x1 ^ x2 ^ x3 ...)  = calculating parity of x1x2x3...
 
+    unsigned int masked = input & mask;
+    return parity(masked);
+}
+
+unsigned int **sbox_linear_approx_table(unsigned int *sbox, unsigned int m, unsigned int n) {
+
+    unsigned int **lat;
     unsigned int nrows = two_power(m);
     unsigned int ncols = two_power(n);
+    unsigned int input, inputMask, outputMask;
 
-    unsigned int i, j;
-    for (i = 0; i < nrows; ++i) {
-        for (j = 0; j < ncols; ++j) {
-            printf("%2d ", ddt[i][j]);
+    lat = alloc_uint_matrix(nrows, ncols);
+
+    for (input = 0; input < nrows; ++input) {
+        for (inputMask = 0; inputMask < nrows; ++inputMask) {
+            for (outputMask = 0; outputMask < ncols; ++outputMask) {
+                if (xor_mask(input, inputMask) == xor_mask(sbox[input], outputMask)) {
+                    lat[inputMask][outputMask] += 1;
+                }
+            }
         }
-        printf("\n");
     }
+
+    return lat;
 
 }
