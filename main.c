@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "num_utils.h"
 #include "sbox_utils.h"
 
@@ -13,7 +14,9 @@ int main() {
     unsigned int m = 3, n = 3;
     unsigned int **ddt = sbox_differential_table(sample_sbox, m, n);
 
-    print_differential_table(ddt, m, n);
+    print_uint_matrix(ddt, m, n);
+
+    free(ddt);
 
     return 0;
 }

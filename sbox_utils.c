@@ -2,6 +2,16 @@
 #include <stdio.h>
 #include "num_utils.h"
 
+unsigned int **alloc_uint_matrix(unsigned int m, unsigned int n) {
+    unsigned int **mat;
+    unsigned int i;
+    mat = malloc(m * sizeof(unsigned int*));
+    for (i = 0; i < m; ++i) {
+        mat[i] = calloc(n, sizeof(unsigned int));
+    }
+    return mat;
+}
+
 unsigned int **sbox_differential_table(unsigned int *sbox, unsigned int m, unsigned int n) {
 
     /**
@@ -18,10 +28,7 @@ unsigned int **sbox_differential_table(unsigned int *sbox, unsigned int m, unsig
     unsigned int ncols = two_power(n);
     unsigned int i, si, di;
 
-    ddt = malloc(nrows * sizeof(unsigned int*));
-    for (i = 0; i < nrows; ++i) {
-        ddt[i] = calloc(ncols, sizeof(unsigned int));
-    }
+    ddt = alloc_uint_matrix(nrows, ncols);
 
     for (i = 0; i < nrows; ++i) {
         si = sbox[i];
@@ -45,10 +52,7 @@ unsigned int **func_differential_table(unsigned int (*S)(unsigned int), unsigned
     unsigned int ncols = two_power(n);
     unsigned int i, si, di;
 
-    ddt = malloc(nrows * sizeof(unsigned int*));
-    for (i = 0; i < nrows; ++i) {
-        ddt[i] = calloc(ncols, sizeof(unsigned int));
-    }
+    ddt = alloc_uint_matrix(nrows, ncols);
 
     for (i = 0; i < nrows; ++i) {
         si = S(i);
@@ -61,7 +65,7 @@ unsigned int **func_differential_table(unsigned int (*S)(unsigned int), unsigned
 
 }
 
-void print_differential_table(unsigned int **ddt, unsigned int m, unsigned int n) {
+void print_uint_matrix(unsigned int **ddt, unsigned int m, unsigned int n) {
 
     unsigned int nrows = two_power(m);
     unsigned int ncols = two_power(n);
