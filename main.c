@@ -15,12 +15,12 @@ int main() {
     unsigned int **ddt = sbox_differential_table(sample_sbox, m, n);
 
     printf("DDT:\n");
-    print_uint_matrix(ddt, m, n);
+    print_uint_matrix(ddt, two_power(m), two_power(n));
 
     unsigned int **lat = sbox_linear_approx_table(sample_sbox, m, n);
 
     printf("LAT:\n");
-    print_uint_matrix(lat, m, n);
+    print_uint_matrix(lat, two_power(m), two_power(n));
 
     free(lat);
     free(ddt);
