@@ -13,4 +13,12 @@ unsigned int nbits(unsigned int);
 
 unsigned int parity(unsigned int);
 
+unsigned int **alloc_uint_matrix(unsigned int, unsigned int);
+
+void print_uint_matrix(unsigned int **, unsigned int, unsigned int);
+
+float **alloc_float_matrix(unsigned int, unsigned int);
+
+void print_float_matrix(float **, unsigned int, unsigned int);
+
 #endif //BLOCK_CIPHER_NUM_UTILS_H

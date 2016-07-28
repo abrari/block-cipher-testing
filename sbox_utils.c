@@ -1,29 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
 #include "num_utils.h"
-
-unsigned int **alloc_uint_matrix(unsigned int m, unsigned int n) {
-    unsigned int **mat;
-    unsigned int i;
-    mat = malloc(m * sizeof(unsigned int*));
-    for (i = 0; i < m; ++i) {
-        mat[i] = calloc(n, sizeof(unsigned int));
-    }
-    return mat;
-}
-
-void print_uint_matrix(unsigned int **ddt, unsigned int m, unsigned int n) {
-
-    unsigned int i, j;
-    for (i = 0; i < m; ++i) {
-        for (j = 0; j < n; ++j) {
-            printf("%2d ", ddt[i][j]);
-        }
-        printf("\n");
-    }
-
-}
 
 // ==============================================================================
 
