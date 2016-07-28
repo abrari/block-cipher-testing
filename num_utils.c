@@ -78,7 +78,7 @@ void print_float_matrix(float **mat, unsigned int m, unsigned int n) {
     unsigned int i, j;
     for (i = 0; i < m; ++i) {
         for (j = 0; j < n; ++j) {
-            printf("%.2f ", mat[i][j]);
+            printf("%5.2f ", mat[i][j]);
         }
         printf("\n");
     }

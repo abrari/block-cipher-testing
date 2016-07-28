@@ -54,3 +54,30 @@ unsigned int **sbox_linear_approx_table(unsigned int *sbox, unsigned int m, unsi
     return lat;
 
 }
+
+float **sbox_sac_matrix(unsigned int *sbox, unsigned int m, unsigned int n) {
+
+    float **sac = alloc_float_matrix(m, n);
+    unsigned int i, j, X, ei, ej, dei;
+
+    for (i = 0; i < m; ++i) {
+        ei = two_power(i);
+        for (j = 0; j < n; ++j) {
+            ej = two_power(j);
+            for (X = 0; X < two_power(m); ++X) {
+                dei = sbox[X] ^ sbox[X ^ ei];
+                sac[i][j] += (dei & ej) >> j; // increment sac[i][j] if bit at position j of dei is set
+            }
+        }
+    }
+
+    float outputLength = (float)two_power(n);
+    for (i = 0; i < m; ++i) {
+        for (j = 0; j < n; ++j) {
+            sac[i][j] /= outputLength;
+        }
+    }
+
+    return sac;
+
+}

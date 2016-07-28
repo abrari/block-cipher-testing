@@ -22,8 +22,14 @@ int main() {
     printf("LAT:\n");
     print_uint_matrix(lat, two_power(m), two_power(n));
 
+    float **sac = sbox_sac_matrix(sample_sbox, m, n);
+
+    printf("SAC:\n");
+    print_float_matrix(sac, m, n);
+
     free(lat);
     free(ddt);
+    free(sac);
 
     return 0;
 }
