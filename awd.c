@@ -253,9 +253,33 @@ unsigned int *awd_binom_distrib(int num_inputs, unsigned int n) {
     };
 
     for (i = 0; i < n; ++i) {
-        B[i] = prob[i] * num_inputs;
+        B[i] = round(prob[i] * num_inputs);
     }
 
     return B;
 
 }
+
+/**
+ * How close the AWD of the cipher from the ideal binomial distrib
+ * Arikan: "PROPAGATION CHARACTERISTICS OF RC5, RC6 AND TWOFISH CIPHERS"
+ */
+double awd_resemblance(unsigned int *awd_array, unsigned int *awd_binom, unsigned int n, unsigned int num_inputs) {
+
+    unsigned int i;
+    double r = 0.0, d = 0.0, errorsum = 0.0;
+    for (i = 0; i < n; ++i) {
+        errorsum += abs(awd_array[i] - awd_binom[i]);
+    }
+    d = (1.0 / (2 * num_inputs)) * errorsum;
+    if (d > 1.0) d = 1.0;
+    if (d < 0.0) d = 0.0;
+    r = 1 - d;
+
+    return r;
+
+}
+
+
+
+

@@ -15,4 +15,6 @@ int main() {
         printf("%d\t%d\t%d\n", i, awd_array[i], awd_binom[i]);
     }
 
+    printf("R = %lf\n", awd_resemblance(awd_array, awd_binom, BIT_AES, 10000));
+
 }
