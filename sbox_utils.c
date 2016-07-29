@@ -36,6 +36,8 @@ unsigned int **sbox_differential_table(unsigned int *sbox, unsigned int m, unsig
 
 unsigned int **sbox_linear_approx_table(unsigned int *sbox, unsigned int m, unsigned int n) {
 
+    // the LAT is in original values (not subtracted by 2^n / 2)
+
     unsigned int **lat;
     unsigned int nrows = two_power(m);
     unsigned int ncols = two_power(n);
@@ -55,6 +57,42 @@ unsigned int **sbox_linear_approx_table(unsigned int *sbox, unsigned int m, unsi
     }
 
     return lat;
+
+}
+
+int sbox_linearity(unsigned int *sbox, unsigned int m, unsigned int n) {
+
+    // https://www.cosic.esat.kuleuven.be/ecrypt/courses/mykonos12/slides/day2/gl.pdf#59
+
+    unsigned int **lat = sbox_linear_approx_table(sbox, m, n);
+    unsigned int nrows = two_power(m);
+    unsigned int ncols = two_power(n);
+    unsigned int i, j;
+    int val, maxAbs = 0;
+
+    // skip zero input/output mask
+    for (i = 1; i < nrows; ++i) {
+        for (j = 1; j < ncols; ++j) {
+            val = abs(lat[i][j] - (two_power(m) / 2));
+            if (maxAbs < val)
+                maxAbs = val;
+        }
+    }
+
+    free(lat);
+
+    return maxAbs;
+
+}
+
+int sbox_nonlinearity(unsigned int *sbox, unsigned int m, unsigned int n) {
+
+    // the easy way
+    // - https://github.com/okazymyrov/sbox/blob/master/Sage/CSbox.sage#L842
+    // - http://crypto.stackexchange.com/a/19976
+
+    int lin = sbox_linearity(sbox, m, n);
+    return two_power(m - 1) - lin;
 
 }
 

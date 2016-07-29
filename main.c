@@ -34,5 +34,12 @@ int main() {
     double bic = sbox_bic(sample_sbox, m, n);
     printf("BIC = %f\n", bic);
 
+    int linearity = sbox_linearity(sample_sbox, m, n);
+    printf("Linearity = %d\n", linearity);
+
+    int nonlinearity = sbox_nonlinearity(sample_sbox, m, n);
+    printf("Non-Linearity = %d\n", nonlinearity);
+
+
     return 0;
 }
