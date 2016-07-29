@@ -31,5 +31,8 @@ int main() {
     free(ddt);
     free(sac);
 
+    double bic = sbox_bic(sample_sbox, m, n);
+    printf("BIC = %f\n", bic);
+
     return 0;
 }

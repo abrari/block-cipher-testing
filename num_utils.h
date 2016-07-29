@@ -13,6 +13,8 @@ unsigned int nbits(unsigned int);
 
 unsigned int parity(unsigned int);
 
+double correlation(unsigned int *, unsigned int *, unsigned int);
+
 unsigned int **alloc_uint_matrix(unsigned int, unsigned int);
 
 void print_uint_matrix(unsigned int **, unsigned int, unsigned int);

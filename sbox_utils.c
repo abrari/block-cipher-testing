@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "num_utils.h"
 
 // ==============================================================================
@@ -81,3 +84,56 @@ float **sbox_sac_matrix(unsigned int *sbox, unsigned int m, unsigned int n) {
     return sac;
 
 }
+
+double sbox_bic(unsigned int *sbox, unsigned int m, unsigned int n) {
+
+    unsigned int i, ei, X, dei;
+    unsigned int j, k, ej, ek, dej, dek;
+    unsigned int *aval_vector_j;
+    unsigned int *aval_vector_k;
+    double corr = 0.0;
+    double maxCorr = 0.0;
+
+    // for each input bit position
+    for (i = 0; i < m; ++i) {
+        ei = two_power(i);
+
+        // for each j, k output bit change if j != k
+        for (j = 0; j < n; ++j) {
+            for (k = 0; k < n; ++k) {
+                if (j != k) {
+                    aval_vector_j = calloc(two_power(m), sizeof(unsigned int));
+                    aval_vector_k = calloc(two_power(m), sizeof(unsigned int));
+
+                    // for each possible input
+                    for (X = 0; X < two_power(m); ++X) {
+                        ej = two_power(j);
+                        ek = two_power(k);
+
+                        dei = sbox[X] ^ sbox[X ^ ei];
+                        dej = (dei & ej) >> j;
+                        dek = (dei & ek) >> k;
+
+                        aval_vector_j[X] = dej;
+                        aval_vector_k[X] = dek;
+                    }
+
+                    corr = fabs(correlation(aval_vector_j, aval_vector_k, two_power(m)));
+                    // printf("corr[%d][%d] = %f\n", j, k, corr);
+                    if (maxCorr < corr)
+                        maxCorr = corr;
+
+                    free(aval_vector_j);
+                    free(aval_vector_k);
+                }
+            }
+        }
+    }
+
+    return maxCorr;
+
+}
+
+
+
+

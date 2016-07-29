@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "num_utils.h"
 
 unsigned int array_max(unsigned int *arr, unsigned int length) {
@@ -37,6 +38,39 @@ unsigned int parity(unsigned int v) {
     v ^= v >> 4;
     v &= 0xf;
     return (0x6996 >> v) & 1u;
+}
+
+double correlation(unsigned int *x, unsigned int *y, unsigned int n) {
+
+    double sx = 0.0;
+    double sy = 0.0;
+    double sxx = 0.0;
+    double syy = 0.0;
+    double sxy = 0.0;
+    int i;
+
+    for(i = 0; i < n; ++i) {
+        double xi = x[i];
+        double yi = y[i];
+
+        sx += xi;
+        sy += yi;
+        sxx += xi * xi;
+        syy += yi * yi;
+        sxy += xi * yi;
+    }
+
+    // covariation
+    double cov = sxy / n - sx * sy / n / n;
+    if (cov == 0) return 0.0;
+
+    // standard error of x
+    double sigmax = sqrt(sxx / n -  sx * sx / n / n);
+    // standard error of y
+    double sigmay = sqrt(syy / n -  sy * sy / n / n);
+
+    // correlation is just a normalized covariation
+    return cov / sigmax / sigmay;
 }
 
 // matrix allocate and print
