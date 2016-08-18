@@ -22,6 +22,15 @@ int main() {
     printf("LAT:\n");
     print_uint_matrix(lat, two_power(m), two_power(n));
 
+    float *ac = sbox_ac(sample_sbox, m, n);
+
+    printf("AC:\n");
+    int i;
+    for (i = 0; i < m; ++i) {
+        printf(" %.2f", ac[i]);
+    }
+    printf("\n");
+
     float **sac = sbox_sac_matrix(sample_sbox, m, n);
 
     printf("SAC:\n");
@@ -30,6 +39,7 @@ int main() {
     free(lat);
     free(ddt);
     free(sac);
+    free(ac);
 
     double bic = sbox_bic(sample_sbox, m, n);
     printf("BIC = %f\n", bic);

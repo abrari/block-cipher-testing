@@ -9,6 +9,8 @@ int sbox_linearity(unsigned int *, unsigned int, unsigned int);
 
 int sbox_nonlinearity(unsigned int *, unsigned int, unsigned int);
 
+float *sbox_ac(unsigned int *, unsigned int, unsigned int);
+
 float **sbox_sac_matrix(unsigned int *, unsigned int, unsigned int);
 
 double sbox_bic(unsigned int *, unsigned int, unsigned int);

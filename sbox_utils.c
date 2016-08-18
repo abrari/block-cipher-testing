@@ -96,6 +96,29 @@ int sbox_nonlinearity(unsigned int *sbox, unsigned int m, unsigned int n) {
 
 }
 
+float *sbox_ac(unsigned int *sbox, unsigned int m, unsigned int n) {
+
+    float *kaval = calloc(m, sizeof(float));
+    unsigned int i, X, ei, dei, w;
+
+    for (i = 0; i < m; i++) {
+        ei = two_power(i);
+        for (X = 0; X < two_power(m); ++X) {
+            dei = sbox[X] ^ sbox[X ^ ei];
+            w   = hamming_weight(dei);
+            kaval[i] += w;
+        }
+    }
+
+    float div = (float)two_power(m) * m;
+    for (i = 0; i < m; ++i) {
+        kaval[i] /= div;
+    }
+
+    return kaval;
+
+}
+
 float **sbox_sac_matrix(unsigned int *sbox, unsigned int m, unsigned int n) {
 
     float **sac = alloc_float_matrix(m, n);

@@ -40,6 +40,14 @@ unsigned int parity(unsigned int v) {
     return (0x6996 >> v) & 1u;
 }
 
+unsigned int hamming_weight(unsigned int v) {
+    // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+
+    v = v - ((v >> 1) & 0x55555555);                    // reuse input as temporary
+    v = (v & 0x33333333) + ((v >> 2) & 0x33333333);     // temp
+    return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
+}
+
 double correlation(unsigned int *x, unsigned int *y, unsigned int n) {
 
     double sx = 0.0;
