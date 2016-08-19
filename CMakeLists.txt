@@ -3,7 +3,7 @@ project(block_cipher)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.c num_utils.h num_utils.c sbox_utils.h sbox_utils.c)
+set(SOURCE_FILES main.c num_utils.h num_utils.c sbox_utils.h sbox_utils.c stats.c stats.h)
 add_executable(block_cipher ${SOURCE_FILES})
 target_link_libraries(block_cipher m)
 
