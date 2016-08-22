@@ -3,6 +3,7 @@
 #include <math.h>
 #include "awd.h"
 #include "aes/aes.h"
+#include "num_utils.h"
 
 #define ECB 1
 
@@ -40,7 +41,16 @@ byte *xor_bytes(byte *b1, byte *b2, unsigned int length) {
     return result;
 }
 
-unsigned int hamming_weight(byte *b, unsigned int length) {
+int is_bit_set(byte *b, unsigned int length, unsigned int pos) {
+
+    unsigned int idx = pos / 8;
+    unsigned int realpos = pos - (idx * 8);
+
+    return (b[idx] & (128 >> realpos)) ? 1 : 0;
+
+}
+
+unsigned int hamming_weight_bytes(byte *b, unsigned int length) {
     unsigned int w = 0;
     unsigned int i, x;
     for (i = 0; i < length; ++i) {
@@ -62,51 +72,95 @@ unsigned int hamming_weight(byte *b, unsigned int length) {
  * @param bit_flip_pos  Which plaintext bit to flip (0-127)
  * @param bit_length    Cipher bit length (128 for AES)
  */
-unsigned int *awd_count_AES(int num_inputs, unsigned int bit_flip_pos, unsigned int bit_length) {
+double *ac_AES(int num_inputs, unsigned int bit_length) {
 
-    unsigned int *awd_array = calloc(bit_length, sizeof(unsigned int));
+    double *k_aval = calloc(bit_length, sizeof(double));
     unsigned int byte_length = bit_length / 8u;
     unsigned int i;
-    unsigned int k;
+    unsigned int w;
+    unsigned int ei;
 
     byte *key = generate_random_bytes(byte_length);
     byte *C  = malloc(byte_length);
     byte *Ci = malloc(byte_length);
 
-    for (i = 0; i < num_inputs; ++i) {
+    for (ei = 0; ei < bit_length; ++ei) {
+        printf("Flipping bit %d...\n", ei);
+        for (i = 0; i < num_inputs; ++i) {
+            byte *P = generate_random_bytes(byte_length);
 
-        // if (i % 100 == 0) printf("Iter %d\n", i);
+            AES128_ECB_encrypt(P, key, C);
+            flip_bit(P, byte_length, ei);
+            AES128_ECB_encrypt(P, key, Ci);
 
-        byte *P = generate_random_bytes(byte_length);
-        // printf("P  = "); print_bytes(P, byte_length); printf("\n");
+            byte *Dei = xor_bytes(C, Ci, byte_length);
+            w = hamming_weight_bytes(Dei, byte_length);
 
-        AES128_ECB_encrypt(P, key, C);
-        flip_bit(P, byte_length, bit_flip_pos);
-        // printf("Pi = "); print_bytes(P, byte_length); printf("\n");
-        AES128_ECB_encrypt(P, key, Ci);
+            k_aval[ei] += w;
 
-        // printf("C  = "); print_bytes(C, byte_length); printf("\n");
-        // printf("Ci = "); print_bytes(Ci, byte_length); printf("\n");
+            free(P);
+            free(Dei);
+        }
+    }
 
-        byte *Dei = xor_bytes(C, Ci, byte_length);
-        // printf("D  = "); print_bytes(Dei, byte_length); printf("\n");
-        k = hamming_weight(Dei, byte_length);
-
-        // printf("k  = %d\n", k);
-
-        awd_array[k] += 1;
-
-        free(P);
-        free(Dei);
+    float div = (float)num_inputs * bit_length;
+    for (ei = 0; ei < bit_length; ++ei) {
+        k_aval[ei] /= div;
     }
 
     free(C);
     free(Ci);
     free(key);
 
-    return awd_array;
+    return k_aval;
 
 }
+
+float **sac_AES(int num_inputs, unsigned int bit_length) {
+
+    float **sac = alloc_float_matrix(bit_length, bit_length);
+    unsigned int byte_length = bit_length / 8u;
+    unsigned int i;
+    unsigned int ei, ej;
+
+    byte *key = generate_random_bytes(byte_length);
+    byte *C  = malloc(byte_length);
+    byte *Ci = malloc(byte_length);
+
+    for (ei = 0; ei < bit_length; ++ei) {
+        // printf("Flipping bit %d...\n", ei);
+        for (i = 0; i < num_inputs; ++i) {
+            byte *P = generate_random_bytes(byte_length);
+
+            AES128_ECB_encrypt(P, key, C);
+            flip_bit(P, byte_length, ei);
+            AES128_ECB_encrypt(P, key, Ci);
+
+            byte *Dei = xor_bytes(C, Ci, byte_length);
+
+            for (ej = 0; ej < bit_length; ++ej) {
+                sac[ei][ej] += is_bit_set(Dei, byte_length, ej);
+            }
+            free(Dei);
+            free(P);
+        }
+    }
+
+    float div = (float)num_inputs;
+    for (ei = 0; ei < bit_length; ++ei) {
+        for (ej = 0; ej < bit_length; ++ej) {
+            sac[ei][ej] /= div;
+        }
+    }
+
+    free(C);
+    free(Ci);
+    free(key);
+
+    return sac;
+
+}
+
 
 /**
  * Calculate the ideal binomial distribution

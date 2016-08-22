@@ -12,11 +12,15 @@ byte *generate_random_bytes(unsigned int length);
 void print_bytes(byte *bytes, unsigned int length);
 void flip_bit(byte *bytes, unsigned int length, unsigned int pos);
 byte *xor_bytes(byte *b1, byte *b2, unsigned int length);
-unsigned int hamming_weight(byte *b, unsigned int length);
+unsigned int hamming_weight_bytes(byte *b, unsigned int length);
+
+int is_bit_set(byte *b, unsigned int length, unsigned int pos);
 
 // AWD
 
-unsigned int *awd_count_AES(int num_inputs, unsigned int bit_flip_pos, unsigned int bit_length);
+double *ac_AES(int num_inputs, unsigned int bit_length);
+float **sac_AES(int num_inputs, unsigned int bit_length);
+
 unsigned int *awd_binom_distrib(int num_inputs, unsigned int n);
 double awd_resemblance(unsigned int *awd_array, unsigned int *awd_binom, unsigned int n, unsigned int num_inputs);
 
