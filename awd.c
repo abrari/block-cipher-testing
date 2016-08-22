@@ -161,6 +161,53 @@ float **sac_AES(int num_inputs, unsigned int bit_length) {
 
 }
 
+/**
+ * Calculate AWD distribution for AES
+ * Kavut & Yucel: "On Some Cryptographic Properties of Rijndael"
+ *
+ * @param num_inputs    Number of plaintexts to generate the distribution (10000)
+ * @param bit_flip_pos  Which plaintext bit to flip (0-127)
+ * @param bit_length    Cipher bit length (128 for AES)
+ */
+unsigned int *awd_count_AES(int num_inputs, unsigned int bit_flip_pos, unsigned int bit_length) {
+
+    unsigned int *awd_array = calloc(bit_length + 1, sizeof(unsigned int));
+    unsigned int byte_length = bit_length / 8u;
+    unsigned int i;
+    unsigned int w;
+
+    byte *key = generate_random_bytes(byte_length);
+    byte *C  = malloc(byte_length);
+    byte *Ci = malloc(byte_length);
+
+    for (i = 0; i < num_inputs; ++i) {
+
+        byte *P = generate_random_bytes(byte_length);
+
+        AES128_ECB_encrypt(P, key, C);
+        flip_bit(P, byte_length, bit_flip_pos);
+        AES128_ECB_encrypt(P, key, Ci);
+
+        byte *Dei = xor_bytes(C, Ci, byte_length);
+        w = hamming_weight_bytes(Dei, byte_length);
+
+        awd_array[w] += 1;
+
+        free(P);
+        free(Dei);
+    }
+
+    free(C);
+    free(Ci);
+    free(key);
+
+    return awd_array;
+
+}
+
+
+
+
 
 /**
  * Calculate the ideal binomial distribution

@@ -21,6 +21,7 @@ int is_bit_set(byte *b, unsigned int length, unsigned int pos);
 double *ac_AES(int num_inputs, unsigned int bit_length);
 float **sac_AES(int num_inputs, unsigned int bit_length);
 
+unsigned int *awd_count_AES(int num_inputs, unsigned int bit_flip_pos, unsigned int bit_length);
 unsigned int *awd_binom_distrib(int num_inputs, unsigned int n);
 double awd_resemblance(unsigned int *awd_array, unsigned int *awd_binom, unsigned int n, unsigned int num_inputs);
 

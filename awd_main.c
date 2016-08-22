@@ -7,45 +7,20 @@
 int main() {
 
     srand(time(NULL));
-    int k;
 
-    for (k = 0; k < 5; ++k) {
+    unsigned int *awd_array = awd_count_AES(10000, 0, BIT_AES);
+    unsigned int *binom = awd_binom_distrib(10000, BIT_AES);
+    int i;
 
-        printf("Run %d: ", k);
-        fflush(stdout);
-
-        float **sac = sac_AES(10000, BIT_AES);
-        double error, maxError = 0;
-        int i, j;
-
-        for (i = 0; i < BIT_AES; ++i) {
-            for (j = 0; j < BIT_AES; ++j) {
-                error = fabs(sac[i][j] - 0.5);
-                if (error > maxError)
-                    maxError = error;
-            }
-        }
-
-        printf("Max Error = %lf\n", maxError);
-        fflush(stdout);
-
-        free(sac);
+    for (i = 0; i < BIT_AES + 1; ++i) {
+        printf("%d\t%d\n", i, awd_array[i]);
     }
 
+    double R = awd_resemblance(awd_array, binom, BIT_AES, 10000);
+    printf("R = %lf", R);
 
-//    double *k_aval = ac_AES(10000, BIT_AES);
-//    double error, maxError = 0;
-//
-//    int i;
-//    for (i = 0; i < BIT_AES; ++i) {
-//        error = fabs(k_aval[i] - 0.5);
-//        if (error > maxError)
-//            maxError = error;
-//
-//        // printf("%f\n", k_aval[i]);
-//    }
-//
-//    printf("Max Error = %lf", maxError);
+    byte *b = generate_random_bytes(BYTE_AES);
+    print_bytes(b, BYTE_AES);
 
 
 }
